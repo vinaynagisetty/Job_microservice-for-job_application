@@ -1,5 +1,6 @@
 package com.vinay.nagisdetty.job_microservice.job;
 
+import com.vinay.nagisdetty.job_microservice.job.dto.JobsWitCompanyDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class JobController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Job>> findAll(){
+    public ResponseEntity<List<JobsWitCompanyDto>> findAll(){
         return ResponseEntity.ok(jobService.findAll());
     }
 

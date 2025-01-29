@@ -5,8 +5,12 @@ package com.vinay.nagisdetty.job_microservice.job.impl;
 import com.vinay.nagisdetty.job_microservice.job.Job;
 import com.vinay.nagisdetty.job_microservice.job.JobRepository;
 import com.vinay.nagisdetty.job_microservice.job.JobService;
+import com.vinay.nagisdetty.job_microservice.job.dto.JobsWitCompanyDto;
+import com.vinay.nagisdetty.job_microservice.job.external.Company;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,8 +24,23 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public List<Job> findAll() {
-        return jobRepository.findAll();
+    public List<JobsWitCompanyDto> findAll() {
+       List<Job> jobs =  jobRepository.findAll();
+       List<JobsWitCompanyDto> jobsWitCompanyDtos = new ArrayList<>();
+
+       for(Job job:jobs) {
+              JobsWitCompanyDto jobsWitCompanyDto = new JobsWitCompanyDto();
+              jobsWitCompanyDto.setJob(job);
+           RestTemplate restTemplate=new RestTemplate();
+           Company company= restTemplate.getForObject("http://localhost:8081/companies/"+job.getCompanyId(),Company.class);
+              jobsWitCompanyDto.setCompany(company);
+              jobsWitCompanyDtos.add(jobsWitCompanyDto);
+
+       }
+
+       return jobsWitCompanyDtos;
+
+
     }
 
     @Override
