@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class JobServiceImpl implements JobService {
@@ -28,19 +29,28 @@ public class JobServiceImpl implements JobService {
        List<Job> jobs =  jobRepository.findAll();
        List<JobsWitCompanyDto> jobsWitCompanyDtos = new ArrayList<>();
 
-       for(Job job:jobs) {
-              JobsWitCompanyDto jobsWitCompanyDto = new JobsWitCompanyDto();
-              jobsWitCompanyDto.setJob(job);
-           RestTemplate restTemplate=new RestTemplate();
-           Company company= restTemplate.getForObject("http://localhost:8081/companies/"+job.getCompanyId(),Company.class);
-              jobsWitCompanyDto.setCompany(company);
-              jobsWitCompanyDtos.add(jobsWitCompanyDto);
-
-       }
-
-       return jobsWitCompanyDtos;
 
 
+       return jobs.stream().map(this::mapJobToDto).collect(Collectors.toList());
+
+
+    }
+    private JobsWitCompanyDto mapJobToDto(Job job) {
+        JobsWitCompanyDto jobsWitCompanyDto = new JobsWitCompanyDto();
+        jobsWitCompanyDto.setJob(job);
+
+        try {
+            // Fetch the company details for the given job
+            RestTemplate restTemplate = new RestTemplate();
+            Company company = restTemplate.getForObject("http://localhost:8081/companies/" + job.getCompanyId(), Company.class);
+            jobsWitCompanyDto.setCompany(company);
+        } catch (Exception e) {
+            // Log the error and set company to null if fetching fails
+//            log.error("Failed to fetch company for job ID: " + job.getId(), e);
+            jobsWitCompanyDto.setCompany(null);
+        }
+
+        return jobsWitCompanyDto;
     }
 
     @Override
