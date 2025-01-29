@@ -31,7 +31,7 @@ public class JobServiceImpl implements JobService {
 
 
 
-       return jobs.stream().map(this::mapJobToDto).collect(Collectors.toList());
+       return jobs.stream().map(job -> mapJobToDto(job)).collect(Collectors.toList());
 
 
     }
