@@ -63,8 +63,11 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public Job getJobById(Long id) {
-        return jobRepository.findById(id).orElse(null);
+    public JobsWitCompanyDto getJobById(Long id) {
+      Job job= jobRepository.findById(id).orElse(null);
+
+        return mapJobToDto(job);
+
     }
 
     @Override
