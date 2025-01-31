@@ -1,14 +1,14 @@
 package com.vinay.nagisdetty.job_microservice.job;
 
-import com.vinay.nagisdetty.job_microservice.job.dto.JobsWitCompanyDto;
+import com.vinay.nagisdetty.job_microservice.job.dto.JObDto;
 
 import java.util.List;
 
 public interface JobService {
-    List<JobsWitCompanyDto> findAll();
+    List<JObDto> findAll();
     void createJob(Job job);
 
-    JobsWitCompanyDto getJobById(Long id);
+    JObDto getJobById(Long id);
 
     boolean deleteJobById(Long id);
 

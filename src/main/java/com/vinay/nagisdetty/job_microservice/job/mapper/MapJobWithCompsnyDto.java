@@ -1,20 +1,24 @@
 package com.vinay.nagisdetty.job_microservice.job.mapper;
 
 import com.vinay.nagisdetty.job_microservice.job.Job;
-import com.vinay.nagisdetty.job_microservice.job.dto.JobsWitCompanyDto;
+import com.vinay.nagisdetty.job_microservice.job.dto.JObDto;
 import com.vinay.nagisdetty.job_microservice.job.external.Company;
+import com.vinay.nagisdetty.job_microservice.job.external.Review;
+
+import java.util.List;
 
 public class MapJobWithCompsnyDto {
-    public static JobsWitCompanyDto mapJobWithCompanyDto(Job job, Company company) {
-        JobsWitCompanyDto jobsWitCompanyDto = new JobsWitCompanyDto();
-        jobsWitCompanyDto.setId(job.getId());
-        jobsWitCompanyDto.setTitle(job.getTitle());
-        jobsWitCompanyDto.setDescription(job.getDescription());
-        jobsWitCompanyDto.setMinSalary(job.getMinSalary());
-        jobsWitCompanyDto.setMaxSalary(job.getMaxSalary());
-        jobsWitCompanyDto.setLocation(job.getLocation());
-        jobsWitCompanyDto.setCompany(company);
+    public static JObDto mapJobWithCompanyDto(Job job, Company company, List<Review> reviews) {
+        JObDto JObDto = new JObDto();
+        JObDto.setId(job.getId());
+        JObDto.setTitle(job.getTitle());
+        JObDto.setDescription(job.getDescription());
+        JObDto.setMinSalary(job.getMinSalary());
+        JObDto.setMaxSalary(job.getMaxSalary());
+        JObDto.setLocation(job.getLocation());
+        JObDto.setCompany(company);
+        JObDto.setReviews(reviews);
 
-        return jobsWitCompanyDto;
+        return JObDto;
     }
 }

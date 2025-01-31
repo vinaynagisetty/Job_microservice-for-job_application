@@ -5,10 +5,15 @@ package com.vinay.nagisdetty.job_microservice.job.impl;
 import com.vinay.nagisdetty.job_microservice.job.Job;
 import com.vinay.nagisdetty.job_microservice.job.JobRepository;
 import com.vinay.nagisdetty.job_microservice.job.JobService;
-import com.vinay.nagisdetty.job_microservice.job.dto.JobsWitCompanyDto;
+import com.vinay.nagisdetty.job_microservice.job.dto.JObDto;
 import com.vinay.nagisdetty.job_microservice.job.external.Company;
+import com.vinay.nagisdetty.job_microservice.job.external.Review;
 import com.vinay.nagisdetty.job_microservice.job.mapper.MapJobWithCompsnyDto;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -34,9 +39,9 @@ public class JobServiceImpl implements JobService {
 
 
     @Override
-    public List<JobsWitCompanyDto> findAll() {
+    public List<JObDto> findAll() {
        List<Job> jobs =  jobRepository.findAll();
-       List<JobsWitCompanyDto> jobsWitCompanyDtos = new ArrayList<>();
+       List<JObDto> JObDtos = new ArrayList<>();
 
 
 
@@ -44,19 +49,25 @@ public class JobServiceImpl implements JobService {
 
 
     }
-    private JobsWitCompanyDto mapJobToDto(Job job) {
+    private JObDto mapJobToDto(Job job) {
 
 
             // Fetch the company details for the given job
 //         RestTemplate restTemplate = new RestTemplate();
             Company company = restTemplate.getForObject("http://COMPANY-MICROSERVICE/companies/" + job.getCompanyId(), Company.class);
-//
 
-        JobsWitCompanyDto jobsWitCompanyDto = MapJobWithCompsnyDto.mapJobWithCompanyDto(job, company);
-        jobsWitCompanyDto.setCompany(company);
+            ResponseEntity<List<Review>>  reviewResponse=restTemplate.exchange("http://REVIEW-MICROSERVICE/reviews?companyId=" + job.getCompanyId(),
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<Review>>() {
+                    });
+
+             List<Review> reviews = reviewResponse.getBody();
+        JObDto JObDto = MapJobWithCompsnyDto.mapJobWithCompanyDto(job, company,reviews);
 
 
-        return jobsWitCompanyDto;
+
+        return JObDto;
     }
 
     @Override
@@ -65,7 +76,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public JobsWitCompanyDto getJobById(Long id) {
+    public JObDto getJobById(Long id) {
       Job job= jobRepository.findById(id).orElse(null);
 
         return mapJobToDto(job);

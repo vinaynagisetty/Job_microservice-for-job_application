@@ -1,9 +1,11 @@
 package com.vinay.nagisdetty.job_microservice.job.dto;
 
-import com.vinay.nagisdetty.job_microservice.job.Job;
 import com.vinay.nagisdetty.job_microservice.job.external.Company;
+import com.vinay.nagisdetty.job_microservice.job.external.Review;
 
-public class JobsWitCompanyDto {
+import java.util.List;
+
+public class JObDto {
 
     private Long id;
     private String title;
@@ -12,6 +14,8 @@ public class JobsWitCompanyDto {
     private String maxSalary;
     private String location;
 
+    private Company company;
+   private List<Review> reviews;
     public String getDescription() {
         return description;
     }
@@ -60,7 +64,6 @@ public class JobsWitCompanyDto {
         this.title = title;
     }
 
-    private Company company;
 
 
 
@@ -70,5 +73,13 @@ public class JobsWitCompanyDto {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 }
