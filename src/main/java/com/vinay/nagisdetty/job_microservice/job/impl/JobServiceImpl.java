@@ -7,6 +7,7 @@ import com.vinay.nagisdetty.job_microservice.job.JobRepository;
 import com.vinay.nagisdetty.job_microservice.job.JobService;
 import com.vinay.nagisdetty.job_microservice.job.dto.JobsWitCompanyDto;
 import com.vinay.nagisdetty.job_microservice.job.external.Company;
+import com.vinay.nagisdetty.job_microservice.job.mapper.MapJobWithCompsnyDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -44,14 +45,15 @@ public class JobServiceImpl implements JobService {
 
     }
     private JobsWitCompanyDto mapJobToDto(Job job) {
-        JobsWitCompanyDto jobsWitCompanyDto = new JobsWitCompanyDto();
-        jobsWitCompanyDto.setJob(job);
+
 
             // Fetch the company details for the given job
 //         RestTemplate restTemplate = new RestTemplate();
             Company company = restTemplate.getForObject("http://COMPANY-MICROSERVICE/companies/" + job.getCompanyId(), Company.class);
-            System.out.println("Company: "+company);
-            jobsWitCompanyDto.setCompany(company);
+//
+
+        JobsWitCompanyDto jobsWitCompanyDto = MapJobWithCompsnyDto.mapJobWithCompanyDto(job, company);
+        jobsWitCompanyDto.setCompany(company);
 
 
         return jobsWitCompanyDto;
