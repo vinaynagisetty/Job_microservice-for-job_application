@@ -7,8 +7,10 @@ import com.vinay.nagisdetty.job_microservice.job.JobRepository;
 import com.vinay.nagisdetty.job_microservice.job.JobService;
 import com.vinay.nagisdetty.job_microservice.job.dto.JobsWitCompanyDto;
 import com.vinay.nagisdetty.job_microservice.job.external.Company;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +22,15 @@ public class JobServiceImpl implements JobService {
     // private List<Job> jobs = new ArrayList<>();
     JobRepository jobRepository;
 
+    @Autowired
+    RestTemplate restTemplate;
+
     public JobServiceImpl(JobRepository jobRepository) {
         this.jobRepository = jobRepository;
     }
+
+
+
 
     @Override
     public List<JobsWitCompanyDto> findAll() {
@@ -39,16 +47,12 @@ public class JobServiceImpl implements JobService {
         JobsWitCompanyDto jobsWitCompanyDto = new JobsWitCompanyDto();
         jobsWitCompanyDto.setJob(job);
 
-        try {
             // Fetch the company details for the given job
-            RestTemplate restTemplate = new RestTemplate();
-            Company company = restTemplate.getForObject("http://localhost:8081/companies/" + job.getCompanyId(), Company.class);
+//         RestTemplate restTemplate = new RestTemplate();
+            Company company = restTemplate.getForObject("http://COMPANY-MICROSERVICE/companies/" + job.getCompanyId(), Company.class);
+            System.out.println("Company: "+company);
             jobsWitCompanyDto.setCompany(company);
-        } catch (Exception e) {
-            // Log the error and set company to null if fetching fails
-//            log.error("Failed to fetch company for job ID: " + job.getId(), e);
-            jobsWitCompanyDto.setCompany(null);
-        }
+
 
         return jobsWitCompanyDto;
     }
