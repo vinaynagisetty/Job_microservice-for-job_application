@@ -32,8 +32,8 @@ public class JobServiceImpl implements JobService {
     CompanyClient companyClient;
     ReviewClient reviewClient;
 
-    @Autowired
-    RestTemplate restTemplate;
+//    @Autowired
+//    RestTemplate restTemplate;
 
     public JobServiceImpl(JobRepository jobRepository,CompanyClient companyClient,ReviewClient reviewClient) {
         this.jobRepository = jobRepository;
