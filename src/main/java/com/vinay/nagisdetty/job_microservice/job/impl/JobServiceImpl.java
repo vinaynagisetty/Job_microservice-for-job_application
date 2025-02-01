@@ -5,6 +5,8 @@ package com.vinay.nagisdetty.job_microservice.job.impl;
 import com.vinay.nagisdetty.job_microservice.job.Job;
 import com.vinay.nagisdetty.job_microservice.job.JobRepository;
 import com.vinay.nagisdetty.job_microservice.job.JobService;
+import com.vinay.nagisdetty.job_microservice.job.clients.CompanyClient;
+import com.vinay.nagisdetty.job_microservice.job.clients.ReviewClient;
 import com.vinay.nagisdetty.job_microservice.job.dto.JObDto;
 import com.vinay.nagisdetty.job_microservice.job.external.Company;
 import com.vinay.nagisdetty.job_microservice.job.external.Review;
@@ -27,12 +29,16 @@ import java.util.stream.Collectors;
 public class JobServiceImpl implements JobService {
     // private List<Job> jobs = new ArrayList<>();
     JobRepository jobRepository;
+    CompanyClient companyClient;
+    ReviewClient reviewClient;
 
     @Autowired
     RestTemplate restTemplate;
 
-    public JobServiceImpl(JobRepository jobRepository) {
+    public JobServiceImpl(JobRepository jobRepository,CompanyClient companyClient,ReviewClient reviewClient) {
         this.jobRepository = jobRepository;
+        this.companyClient = companyClient;
+        this.reviewClient = reviewClient;
     }
 
 
@@ -54,15 +60,15 @@ public class JobServiceImpl implements JobService {
 
             // Fetch the company details for the given job
 //         RestTemplate restTemplate = new RestTemplate();
-            Company company = restTemplate.getForObject("http://COMPANY-MICROSERVICE/companies/" + job.getCompanyId(), Company.class);
+            Company company =companyClient.getCompanyById(job.getCompanyId());
 
-            ResponseEntity<List<Review>>  reviewResponse=restTemplate.exchange("http://REVIEW-MICROSERVICE/reviews?companyId=" + job.getCompanyId(),
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<Review>>() {
-                    });
+//            ResponseEntity<List<Review>>  reviewResponse=restTemplate.exchange("http://REVIEW-MICROSERVICE/reviews?companyId=" + job.getCompanyId(),
+//                    HttpMethod.GET,
+//                    null,
+//                    new ParameterizedTypeReference<List<Review>>() {
+//                    });
 
-             List<Review> reviews = reviewResponse.getBody();
+             List<Review> reviews = reviewClient.getReviewsByCompanyId(job.getCompanyId());
         JObDto JObDto = MapJobWithCompsnyDto.mapJobWithCompanyDto(job, company,reviews);
 
 
