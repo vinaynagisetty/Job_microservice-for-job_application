@@ -12,6 +12,8 @@ import com.vinay.nagisdetty.job_microservice.job.external.Company;
 import com.vinay.nagisdetty.job_microservice.job.external.Review;
 import com.vinay.nagisdetty.job_microservice.job.mapper.MapJobWithCompsnyDto;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.core.ParameterizedTypeReference;
@@ -32,6 +34,7 @@ public class JobServiceImpl implements JobService {
     JobRepository jobRepository;
     CompanyClient companyClient;
     ReviewClient reviewClient;
+    int attemspts=0;
 
 //    @Autowired
 //    RestTemplate restTemplate;
@@ -46,8 +49,11 @@ public class JobServiceImpl implements JobService {
 
 
     @Override
-    @CircuitBreaker(name = "companyBreaker", fallbackMethod = "companyFallback")
+//    @CircuitBreaker(name = "companyBreaker", fallbackMethod = "companyFallback")
+//    @Retry(name = "companyBreaker", fallbackMethod = "companyFallback")
+    @RateLimiter(name = "companyBreaker")
     public List<JObDto> findAll() {
+        System.out.println("attempts: "+  ++attemspts);
        List<Job> jobs =  jobRepository.findAll();
        List<JObDto> JObDtos = new ArrayList<>();
 
