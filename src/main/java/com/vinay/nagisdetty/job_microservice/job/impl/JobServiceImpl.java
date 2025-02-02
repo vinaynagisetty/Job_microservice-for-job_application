@@ -11,6 +11,7 @@ import com.vinay.nagisdetty.job_microservice.job.dto.JObDto;
 import com.vinay.nagisdetty.job_microservice.job.external.Company;
 import com.vinay.nagisdetty.job_microservice.job.external.Review;
 import com.vinay.nagisdetty.job_microservice.job.mapper.MapJobWithCompsnyDto;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.core.ParameterizedTypeReference;
@@ -45,6 +46,7 @@ public class JobServiceImpl implements JobService {
 
 
     @Override
+    @CircuitBreaker(name = "companyBreaker", fallbackMethod = "companyFallback")
     public List<JObDto> findAll() {
        List<Job> jobs =  jobRepository.findAll();
        List<JObDto> JObDtos = new ArrayList<>();
@@ -54,6 +56,10 @@ public class JobServiceImpl implements JobService {
        return jobs.stream().map(job -> mapJobToDto(job)).collect(Collectors.toList());
 
 
+    }
+    public List<Job> companyFallback(Exception e) {
+        List<Job> jobs =  jobRepository.findAll();
+        return jobs;
     }
     private JObDto mapJobToDto(Job job) {
 
